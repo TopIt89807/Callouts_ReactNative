@@ -1,7 +1,25 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import Splash from 'containers/Splash';
 
-export default class Root extends React.Component {
+// const HomeScreen = ({ navigation }) => (
+//   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//     <Text>Home Screen</Text>
+//     <Button
+//       onPress={() => navigation.navigate('Details')}
+//       title="Go to details"
+//     />
+//   </View>
+// );
+
+const RootNavigator = StackNavigator({
+  Splash: { screen: Splash },
+  // Home: { screen: HomeScreen },
+});
+export default RootNavigator;
+
+/*export default class Root extends React.Component {
   render() {
     return (
       <View style={styles.container}>
@@ -21,4 +39,4 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
   });
-  
+  */
