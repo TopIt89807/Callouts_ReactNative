@@ -25,7 +25,12 @@ function* listenAction(action) {
         }
       }
       yield put(Creators.updateStates({ status: newStatus }))
-    } else if (action.type.endsWith('/failure')) {
+
+      const { result, show=0 } = action.payload;
+      if(show)
+        yield put(Creators.showMessage({ visible: true, title: 'Success', text: result.message}))
+
+      } else if (action.type.endsWith('/failure')) {
       newStatus = {
         ...status,
         effects: {
@@ -35,10 +40,9 @@ function* listenAction(action) {
       }
       yield put(Creators.updateStates({ status: newStatus }))
 
-      if ( true ) {
-        const { err } = action.payload
+      const { err, show=1 } = action.payload
+      if(show)
         yield put(Creators.showMessage({ visible: true, title: 'Error...', text: err.message || err.errorMessage }))
-      }
     }
   } catch (err) {
     if ( true ) {

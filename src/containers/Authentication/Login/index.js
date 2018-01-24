@@ -18,6 +18,26 @@ class Login extends React.Component {
         password: '',
     }
 
+    componentWillReceiveProps({ global, user }) {
+        console.log(global);
+        console.log(user);
+
+        // if (global.status.effects[Types.SIGN_IN] === 'success'
+        //     && this.props.global.status.effects[Types.SIGN_IN] === 'request') {
+        //     const { navigate } = this.props.navigation
+
+        //     if (user.err !== null) {
+        //         if (user.err.code === 'UserNotConfirmedException') {
+        //         navigate('ConfirmUser', { username: this.state.email })
+        //         }
+        //     } else {
+        //         if (user.result.mfa === true) {
+        //         navigate('CodeVerify')
+        //         }
+        //     }
+        // }
+    }
+
     validateInput = () => {
         const { email, password } = this.state;
 
@@ -59,7 +79,6 @@ class Login extends React.Component {
                 style={styles.scrollView}
             >
                 <View style={styles.login}>
-                {/* { CommonWidgets.renderSpacer(4) } */}
                     <View style={styles.space}>
                         <Text style={styles.titleText}>
                             Callouts

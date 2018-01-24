@@ -12,8 +12,14 @@ const signInSuccess = (state, action) => ({
     ...action.payload
 })
 
+const signUpSuccess = (state, action) => ({
+    ...state,
+    ...action.payload
+})
+
 const handler = {
     [success(Types.SIGN_IN)]: signInSuccess,
+    [success(Types.SIGN_UP)]: signUpSuccess,
 }
 
 export default createReducer(initialState, handler);
