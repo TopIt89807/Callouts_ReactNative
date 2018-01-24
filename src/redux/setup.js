@@ -19,7 +19,7 @@ const setupStore = (initialState = fromJS({})) => {
 
     sagas.forEach(saga => sagaMiddleware.run(saga));
 
-    return setupStore;
+    return store;
 }
 
 export default setupStore;

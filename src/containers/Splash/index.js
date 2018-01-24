@@ -11,7 +11,7 @@ class Splash extends React.Component {
     componentDidMount() {
         const { navigation } = this.props;
         setTimeout(() => {
-            navigation.navigate('Home');
+            navigation.navigate('Login');
         }, 1000);
     }
     render() {
