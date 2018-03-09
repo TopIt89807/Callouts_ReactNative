@@ -30,7 +30,7 @@ function* listenAction(action) {
       if(show)
         yield put(Creators.showMessage({ visible: true, title: 'Success', text: result.message}))
 
-      } else if (action.type.endsWith('/failure')) {
+    } else if (action.type.endsWith('/failure')) {
       newStatus = {
         ...status,
         effects: {

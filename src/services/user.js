@@ -34,3 +34,16 @@ export const signUp = (email, password, user_type) => {
   const url = 'api/users/signup';
   return request(url, option)
 }
+
+export const getUsers = (user_type, token) => {
+  let option = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': token,
+    },
+  };
+  
+  const url = 'api/users/get_all/' + user_type;
+  return request(url, option)
+}

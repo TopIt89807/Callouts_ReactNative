@@ -5,6 +5,7 @@ import { success } from 'utils/action'
 
 export const initialState = Immutable({
     result: {},
+    masters: [],
 })
 
 const signInSuccess = (state, action) => ({
@@ -17,9 +18,17 @@ const signUpSuccess = (state, action) => ({
     ...action.payload
 })
 
+const getUsersSuccess = (state, action) => ({
+    ...state,
+    masters: [
+        ...action.payload.list
+    ]
+})
+
 const handler = {
     [success(Types.SIGN_IN)]: signInSuccess,
     [success(Types.SIGN_UP)]: signUpSuccess,
+    [success(Types.GET_USERS)]: getUsersSuccess,
 }
 
 export default createReducer(initialState, handler);

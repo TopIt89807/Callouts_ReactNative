@@ -5,7 +5,7 @@ import styles from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import CommonWidgets from 'components/CommonWidgets'
 import MessageBox from 'components/MessageBox'
-import { Creators } from 'redux/actions/user';
+import { Types, Creators } from 'redux/actions/user';
 import { Creators as globalCreators } from 'redux/actions/global';
 
 class Login extends React.Component {
@@ -19,23 +19,11 @@ class Login extends React.Component {
     }
 
     componentWillReceiveProps({ global, user }) {
-        console.log(global);
-        console.log(user);
-
-        // if (global.status.effects[Types.SIGN_IN] === 'success'
-        //     && this.props.global.status.effects[Types.SIGN_IN] === 'request') {
-        //     const { navigate } = this.props.navigation
-
-        //     if (user.err !== null) {
-        //         if (user.err.code === 'UserNotConfirmedException') {
-        //         navigate('ConfirmUser', { username: this.state.email })
-        //         }
-        //     } else {
-        //         if (user.result.mfa === true) {
-        //         navigate('CodeVerify')
-        //         }
-        //     }
-        // }
+        if (global.status.effects[Types.SIGN_IN] === 'success'
+            && this.props.global.status.effects[Types.SIGN_IN] === 'request') {
+            const { navigate } = this.props.navigation;
+            navigate('Normal');
+        }
     }
 
     validateInput = () => {

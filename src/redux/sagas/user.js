@@ -29,9 +29,26 @@ function* signUp(action) {
   }
 }
 
+function* getUsers(action) {
+  try {
+    yield put(requestCreator(Types.GET_USERS))
+    const res = yield select(state => state.get('user'));
+    const token = res.result.token;
+    const result = yield call(services.getUsers, action.user_type, token);
+    if(result.status == 200)
+      yield put(successCreator(Types.GET_USERS, { list: result.list }))
+    else 
+      yield put(failureCreator(Types.GET_USERS, { err: result }))
+  
+  } catch(err) {
+    yield put(failureCreator(Types.GET_USERS, { err }))
+  }
+}
+
 export function* userSaga() {
   yield all([
     takeLatest(Types.SIGN_IN, signIn),
     takeLatest(Types.SIGN_UP, signUp),
+    takeLatest(Types.GET_USERS, getUsers),
   ])
 }
