@@ -8,7 +8,6 @@ import styles from './styles';
 
 class MastersAvailable extends React.Component {
     static navigationOptions = {
-      title: "Masters Available",
       tabBarLabel: 'Masters Available',
     //   // Note: By default the icon is only shown on iOS. Search the showIcon option below.
     //   tabBarIcon: ({ tintColor }) => (
@@ -57,7 +56,6 @@ class MastersAvailable extends React.Component {
       );
     }
 }
-
 
 const mapStateToProps = (state) => {
   return {

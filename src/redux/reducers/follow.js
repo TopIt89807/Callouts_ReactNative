@@ -6,6 +6,7 @@ import { success } from 'utils/action'
 export const initialState = Immutable({
     result: {},
     tab: 0,
+    followings: [],
 })
 
 const followAddSuccess = (state, action) => ({
@@ -23,10 +24,18 @@ const setTabIndex = (state, action) => ({
     tab: action.index
 })
 
+const getFollowingsSuccess = (state, action) => ({
+    ...state,
+    followings: [
+        ...action.payload.list
+    ]
+})
+
 const handler = {
     [success(Types.FOLLOW_ADD)]: followAddSuccess,
     [success(Types.FOLLOW_CHECK)]: followCheckSuccess,
     [Types.SET_TAB_INDEX]: setTabIndex,
+    [success(Types.GET_FOLLOWINGS)]: getFollowingsSuccess,
 }
 
 export default createReducer(initialState, handler);

@@ -1,23 +1,18 @@
 import React from 'react';
-import { Button, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import Lists from './Lists';
+import Posts from './Posts';
 
-class MastersFollowing extends React.Component {
-    static navigationOptions = {
-      title: "Masters Following",
-      tabBarLabel: 'Masters Following',
-    };
-  
-    componentDidMount() {
-    }
-
-    render() {
-      return (
-        <Button
-          onPress={() => this.props.navigation.navigate('Notifications')}
-          title="Go to notifications"
-        />
-      );
-    }
-}
+const MastersFollowing = StackNavigator({
+  Lists: { screen: Lists },
+  Posts: { screen: Posts },
+}, {
+  navigationOptions: {
+    gesturesEnabled: false,
+    cardStack: { gesturesEnabled: false },
+    tabBarLabel: 'Masters Following',
+  }
+});
 
 export default MastersFollowing;

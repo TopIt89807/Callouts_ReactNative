@@ -35,9 +35,26 @@ function* followCheck(action) {
   }
 }
 
+function* getFollowings(action) {
+  try {
+    yield put(requestCreator(Types.GET_FOLLOWINGS))
+    const res = yield select(state => state.get('user'));
+    const token = res.result.token;
+    const follower = res.result.user.id;
+    const result = yield call(services.getFollowings, follower, token)
+    if(result.status == 200)
+        yield put(successCreator(Types.GET_FOLLOWINGS, { list: result.list }))
+    else 
+        yield put(failureCreator(Types.GET_FOLLOWINGS, { err: result, show: 0 }))
+  } catch (err) {
+      yield put(failureCreator(Types.GET_FOLLOWINGS, { err }))
+  }
+}
+
 export function* followSaga() {
   yield all([
     takeLatest(Types.FOLLOW_ADD, followAdd),
     takeLatest(Types.FOLLOW_CHECK, followCheck),
+    takeLatest(Types.GET_FOLLOWINGS, getFollowings),
   ])
 }

@@ -32,15 +32,16 @@ const MainTabNavigator = TabNavigator({
 
 class Normal extends React.Component {
     static navigationOptions = {
-        headerLeft: null,
-        title: "Callouts - Normal",
+        // headerLeft: null,
+        // title: "Callouts - Normal",
+        header: null,
     };
 
     componentDidMount() {
-        this._onNav = this._onNav.bind(this);
+        // this._onNav = this._onNav.bind(this);
     }
 
-    _onNav(prevState, nextState) {
+    _onNav = (prevState, nextState) => {
         this.props.setTabIndex(nextState.index);
     }
 
