@@ -21,9 +21,16 @@ export default  StyleSheet.create({
         flex: 1,
         alignSelf: 'center'
     },
+    info: {
+        flex: 1,
+        flexDirection: 'row'
+    },
+    user: {
+        flex: 1,
+    },
     date: {
-      flex: 1,
-      alignSelf: 'flex-end'
+        flex: 1,
+        textAlign: 'right',
     },
     text: {
         // marginBottom: 12,

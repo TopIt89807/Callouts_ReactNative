@@ -32,9 +32,9 @@ const MainTabNavigator = TabNavigator({
 
 class Normal extends React.Component {
     static navigationOptions = {
-        // headerLeft: null,
+        headerLeft: null,
         // title: "Callouts - Normal",
-        header: null,
+        // header: null,
     };
 
     componentDidMount() {

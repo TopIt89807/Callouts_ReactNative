@@ -18,8 +18,24 @@ function* getPosts(action) {
   }
 }
 
+function* getAll(action) {
+  try {
+    yield put(requestCreator(Types.GET_ALL))
+    const res = yield select(state => state.get('user'));
+    const token = res.result.token;
+    const result = yield call(services.getAll, token)
+    if(result.status == 200)
+        yield put(successCreator(Types.GET_ALL, { list: result.list }))
+    else 
+        yield put(failureCreator(Types.GET_ALL, { err: result }))
+  } catch (err) {
+      yield put(failureCreator(Types.GET_ALL, { err }))
+  }
+}
+
 export function* postSaga() {
   yield all([
     takeLatest(Types.GET_POSTS, getPosts),
+    takeLatest(Types.GET_ALL, getAll),
   ])
 }

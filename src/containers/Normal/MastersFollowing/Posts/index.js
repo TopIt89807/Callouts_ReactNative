@@ -12,13 +12,6 @@ class Posts extends React.Component {
         title: "View posts"
     });
   
-    componentDidMount() {
-      console.log(this.props.navigation.state.params)
-    }
-
-    componentWillReceiveProps({ global, user, follow }) {
-    }
-
     render() {
       return (
         <FlatList

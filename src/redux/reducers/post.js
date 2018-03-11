@@ -15,8 +15,16 @@ const getPostsSuccess = (state, action) => ({
     ]
 })
 
+const getAllSuccess = (state, action) => ({
+    ...state,
+    posts: [
+        ...action.payload.list
+    ]
+})
+
 const handler = {
     [success(Types.GET_POSTS)]: getPostsSuccess,
+    [success(Types.GET_ALL)]: getAllSuccess,
 }
 
 export default createReducer(initialState, handler);
