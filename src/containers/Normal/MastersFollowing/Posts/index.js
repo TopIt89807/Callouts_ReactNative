@@ -6,6 +6,7 @@ import { Creators as followCreators } from 'redux/actions/follow';
 import { Creators as globalCreators } from 'redux/actions/global';
 import styles from './styles';
 import Moment from 'moment';
+import NavigationBar from 'react-native-navbar';
 
 class Posts extends React.Component {
     static navigationOptions = ({navigation}) => ({
@@ -13,26 +14,36 @@ class Posts extends React.Component {
     });
   
     render() {
+      const leftButtonConfig = {
+        title: '<Back',
+        handler: () => this.props.navigation.goBack()
+      };
       return (
-        <FlatList
-          data={this.props.navigation.state.params.posts}
-          renderItem={({item}) => {
-            return <View style={styles.employee}>
-                <Text style={styles.date}>
-                  {Moment(item.created_date).format('YYYY/MM/DD H:mm:s')}
-                </Text>
-                {item.image? 
-                  <Image style={styles.cover}
-                        source={{uri: item.thumb_img}}/>
-                  : <Text style={styles.noimage}>No Image</Text>
-                }
-                <Text style={styles.text}>
-                  {item.text}
-                </Text>
-              </View>
-            }}
-          keyExtractor={item => item._id}
-        />
+        <View  style={{ flex: 1 }}>
+          <NavigationBar
+            title={{ title: 'Masters Following', }}
+            leftButton={leftButtonConfig}
+          />
+          <FlatList
+            data={this.props.navigation.state.params.posts}
+            renderItem={({item}) => {
+              return <View style={styles.employee}>
+                  <Text style={styles.date}>
+                    {Moment(item.created_date).format('YYYY/MM/DD H:mm:s')}
+                  </Text>
+                  {item.image? 
+                    <Image style={styles.cover}
+                          source={{uri: item.thumb_img}}/>
+                    : <Text style={styles.noimage}>No Image</Text>
+                  }
+                  <Text style={styles.text}>
+                    {item.text}
+                  </Text>
+                </View>
+              }}
+            keyExtractor={item => item._id}
+          />
+        </View>
       );
     }
 }

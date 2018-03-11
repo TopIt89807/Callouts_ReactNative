@@ -6,6 +6,7 @@ import { Creators as followCreators } from 'redux/actions/follow';
 import { Types, Creators as postCreators } from 'redux/actions/post';
 import { Creators as globalCreators } from 'redux/actions/global';
 import styles from './styles';
+import NavigationBar from 'react-native-navbar';
 
 class Lists extends React.Component {
     static navigationOptions = {
@@ -34,24 +35,29 @@ class Lists extends React.Component {
 
     render() {
       return (
-        <FlatList
-          data={this.props.follow.followings}
-          renderItem={({item}) => {
-            return <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => this.viewProfile(item.following_id)}
-            >
-              <View style={styles.employee}>
-                <View style={styles.info}>
-                  <Text style={styles.name}>
-                    {item.following_id.email}
-                  </Text>
+        <View  style={{ flex: 1 }}>
+          <NavigationBar
+            title={{ title: 'Masters Following', }}
+          />
+          <FlatList
+            data={this.props.follow.followings}
+            renderItem={({item}) => {
+              return <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => this.viewProfile(item.following_id)}
+              >
+                <View style={styles.employee}>
+                  <View style={styles.info}>
+                    <Text style={styles.name}>
+                      {item.following_id.email}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-            }}
-          keyExtractor={item => item._id}
-        />
+              </TouchableOpacity>
+              }}
+            keyExtractor={item => item._id}
+          />
+        </View>
       );
     }
 }

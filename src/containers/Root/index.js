@@ -16,7 +16,7 @@ const RootNavigator = StackNavigator({
 }, {
   navigationOptions: {
     gesturesEnabled: false,
-    cardStack: { gesturesEnabled: false }
+    cardStack: { gesturesEnabled: false },
   }
 });
 

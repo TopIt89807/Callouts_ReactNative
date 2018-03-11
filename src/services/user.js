@@ -35,9 +35,13 @@ export const signUp = (email, password, user_type) => {
   return request(url, option)
 }
 
-export const getUsers = (user_type, token) => {
+export const getUsers = (user_type, follower, token) => {
+  let data = {
+    follower
+  };
   let option = {
-    method: 'GET',
+    method: 'POST',
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': token,

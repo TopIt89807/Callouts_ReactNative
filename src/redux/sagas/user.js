@@ -33,8 +33,9 @@ function* getUsers(action) {
   try {
     yield put(requestCreator(Types.GET_USERS))
     const res = yield select(state => state.get('user'));
+    const follower = res.result.user.id;
     const token = res.result.token;
-    const result = yield call(services.getUsers, action.user_type, token);
+    const result = yield call(services.getUsers, action.user_type, follower, token);
     if(result.status == 200)
       yield put(successCreator(Types.GET_USERS, { list: result.list }))
     else 

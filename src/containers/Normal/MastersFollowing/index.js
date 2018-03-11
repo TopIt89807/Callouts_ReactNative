@@ -12,6 +12,7 @@ const MastersFollowing = StackNavigator({
     gesturesEnabled: false,
     cardStack: { gesturesEnabled: false },
     tabBarLabel: 'Masters Following',
+    header: null,
   }
 });
 
