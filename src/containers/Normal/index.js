@@ -46,7 +46,7 @@ class Normal extends React.Component {
 
     render() {
         return (
-            <MainTabNavigator onNavigationStateChange={this._onNav}/>
+            <MainTabNavigator onNavigationStateChange={this._onNav} screenProps={this.props.navigation}/>
         );
     }
 }

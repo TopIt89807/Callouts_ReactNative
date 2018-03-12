@@ -36,12 +36,22 @@ class MastersAvailable extends React.Component {
     onFollow(following) {
       this.props.followAdd(following);
     }
+
+    logout() {
+      this.props.screenProps.goBack();
+      this.props.signOut();
+    }
     
     render() {
+      const rightButtonConfig = {
+        title: 'Logout',
+        handler: () => this.logout()
+      };
       return (
         <View  style={{ flex: 1 }}>
           <NavigationBar
             title={{ title: 'Masters Available', }}
+            rightButton={rightButtonConfig}
           />
           <FlatList
             data={this.props.user.masters}
@@ -83,6 +93,7 @@ const mapDispatchToProps = {
   getUsers: Creators.getUsers,
   followAdd: followCreators.followAdd,
   check: followCreators.check,
+  signOut: Creators.signOut,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MastersAvailable)

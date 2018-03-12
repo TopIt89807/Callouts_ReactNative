@@ -33,11 +33,21 @@ class Lists extends React.Component {
       this.props.getPosts(following._id);
     }
 
+    logout() {
+      this.props.screenProps.goBack();
+      this.props.signOut();
+    }
+
     render() {
+      const rightButtonConfig = {
+        title: 'Logout',
+        handler: () => this.logout()
+      };
       return (
         <View  style={{ flex: 1 }}>
           <NavigationBar
             title={{ title: 'Masters Following', }}
+            rightButton={rightButtonConfig}
           />
           <FlatList
             data={this.props.follow.followings}
@@ -74,6 +84,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   getFollowings: followCreators.getFollowings,
   getPosts: postCreators.getPosts,
+  signOut: Creators.signOut,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Lists)
