@@ -22,7 +22,9 @@ class Login extends React.Component {
         if (global.status.effects[Types.SIGN_IN] === 'success'
             && this.props.global.status.effects[Types.SIGN_IN] === 'request') {
             const { navigate } = this.props.navigation;
-            navigate('Normal');
+            if(this.props.user.result.user.user_type == 1)
+                navigate('Normal');
+            else navigate('Master')
         }
     }
 
