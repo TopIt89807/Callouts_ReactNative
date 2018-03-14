@@ -10,6 +10,9 @@ import Moment from 'moment';
 import NavigationBar from 'react-native-navbar';
 import { TextField } from 'react-native-material-textfield';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import ImagePicker from 'react-native-image-picker';
+import defaultImg from 'src/static/images/default-thumbnail.jpg';
+import { RNS3 } from 'react-native-aws3';
 
 class Wizard extends React.Component {
     static navigationOptions = ({navigation}) => ({
@@ -18,6 +21,8 @@ class Wizard extends React.Component {
 
     state = {
         description: '',
+        avatarSource: defaultImg,
+        response: '',
     }
 
     componentDidMount() {
@@ -33,9 +38,96 @@ class Wizard extends React.Component {
     }
 
     onSave = () => {
-        this.props.addPost(this.props.user.result.user.id, this.state.description, '');
-        // this.setState({description: 'abc'});
-        // console.log(this.state.description);
+        if(!this.state.description && !this.state.response.uri) {
+            return this.props.showMessage({
+                visible: true,
+                title: 'Error...',
+                text: 'Attach text or image!',
+            })
+        }
+        if(!this.state.response.uri) {
+            this.props.addPost(this.props.user.result.user.id, this.state.description, '');
+            return this.props.showMessage({
+                visible: true,
+                title: 'Success',
+                text: 'You posted a new text!',
+            })
+        }
+        const file = {
+            // `uri` can also be a file system path (i.e. file://)
+            uri: this.state.response.uri,
+            name: Date.now(),
+            type: "image/png"
+        }
+            
+        const options = {
+            keyPrefix: "images/",
+            bucket: "callouts-rn",
+            region: "us-east-1",
+            accessKey: "AKIAJFNO27RERYUIWP4A",
+            secretKey: "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",
+            successActionStatus: 201
+        }
+            
+        RNS3.put(file, options).then(response => {
+            if (response.status !== 201)
+                throw new Error("Failed to upload image to S3");
+            this.props.showMessage({
+                visible: true,
+                title: 'Success',
+                text: 'New post added!',
+            })
+            this.props.addPost(this.props.user.result.user.id, this.state.description,
+                response.body.postResponse.location);
+            /**
+             * {
+             *   postResponse: {
+             *     bucket: "your-bucket",
+             *     etag : "9f620878e06d28774406017480a59fd4",
+             *     key: "uploads/image.png",
+             *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+             *   }
+             * }
+             */
+        })
+        
+    }
+
+    showImagePicker = () => {
+        var options = {
+            title: 'Select Picture',
+            // customButtons: [
+            //   {name: 'fb', title: 'Choose Photo from Facebook'},
+            // ],
+            storageOptions: {
+              skipBackup: true,
+              path: 'images'
+            }
+        };
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+            
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            }
+            else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }
+            else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }
+            else {
+                let source = { uri: response.uri };
+            
+                // You can also display the image using data:
+                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+            
+                this.setState({
+                    avatarSource: source,
+                    response: response,
+                });
+            }
+        });
     }
 
     render() {
@@ -58,8 +150,13 @@ class Wizard extends React.Component {
                 automaticallyAdjustContentInsets={false}
                 style={styles.container}
             >
-                <Image style={styles.cover}
-                    source={{uri: "https://process.filestackapi.com/rotate=deg:exif/resize=width:300,height:300,fit:clip/h7l9sufJQ0WkGSCK6T8P"}}/>
+                <TouchableOpacity activeOpacity = { .5 } onPress={this.showImagePicker}>
+                    <Image
+                        style={styles.cover}
+                        source={this.state.avatarSource}
+                        // source={{uri: "https://process.filestackapi.com/rotate=deg:exif/resize=width:300,height:300,fit:clip/h7l9sufJQ0WkGSCK6T8P"}}
+                    />
+                </TouchableOpacity>
                 <TextField
                     ref= {(el) => { this.description = el; }}
                     onChangeText={(description) => this.setState({description})}
@@ -88,6 +185,7 @@ const mapDispatchToProps = {
   getPosts: postCreators.getPosts,
   getFollowings: followCreators.getFollowings,
   signOut: Creators.signOut,
+  showMessage: globalCreators.showMessage,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard)

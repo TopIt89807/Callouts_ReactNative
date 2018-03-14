@@ -11,7 +11,7 @@ export default  StyleSheet.create({
         // borderBottomWidth: 1
     },
     cover: {
-        // width: 150,
+        width: Metrics.screenWidth,
         height: 300,
         // marginLeft: 10,
         resizeMode: 'contain'

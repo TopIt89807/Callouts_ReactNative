@@ -5,7 +5,9 @@ export const addPost = (master_id, text, image, token) => {
         master_id,
         text,
         image,
+        thumb_img: image,
     };
+    console.log(image);
     let option = {
         method: 'POST',
         body: JSON.stringify(data),
