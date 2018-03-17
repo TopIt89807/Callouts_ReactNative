@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button, StyleSheet, FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
-import { Types, Creators } from 'redux/actions/user';
+import { Creators } from 'redux/actions/user';
 import { Creators as followCreators } from 'redux/actions/follow';
-import { Creators as postCreators } from 'redux/actions/post';
+import { Types, Creators as postCreators } from 'redux/actions/post';
 import { Creators as globalCreators } from 'redux/actions/global';
 import styles from './styles';
 import Moment from 'moment';
@@ -19,6 +19,13 @@ class Master extends React.Component {
         this.props.getPosts(this.props.user.result.user.id);
     }
 
+    componentWillReceiveProps({ global, user, follow, post }) {
+      if (global.status.effects[Types.DELETE_POST] === 'success'
+          && this.props.global.status.effects[Types.DELETE_POST] === 'request') {
+          this.props.getPosts(this.props.user.result.user.id);
+      }
+    }
+
     logout() {
         this.props.navigation.goBack();
         this.props.signOut();
@@ -27,6 +34,15 @@ class Master extends React.Component {
     onAdd = () => {
       const { navigate } = this.props.navigation;
       navigate('Wizard');
+    }
+
+    onRemove = (id) => {
+      this.props.deletePost(id);
+    }
+
+    onUpdate = (item) => {
+      const { navigate } = this.props.navigation;
+      navigate('Wizard', item);
     }
 
     render() {
@@ -44,6 +60,7 @@ class Master extends React.Component {
             data={this.props.post.posts}
             renderItem={({item}) => {
               return <View style={styles.employee}>
+                <TouchableOpacity activeOpacity = { .5 } onPress={() => this.onUpdate(item)}>
                   <Text style={styles.date}>
                     {Moment(item.created_date).format('YYYY/MM/DD H:mm:s')}
                   </Text>
@@ -55,6 +72,14 @@ class Master extends React.Component {
                   <Text style={styles.text}>
                     {item.text}
                   </Text>
+                  <ActionButton
+                    buttonColor="rgba(255, 0, 0, 1)"
+                    onPress={() => this.onRemove(item._id)}
+                    size={30}
+                    position="left"
+                    buttonText="-"
+                  />
+                </TouchableOpacity>
                 </View>
               }}
             keyExtractor={item => item._id}
@@ -82,6 +107,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   getPosts: postCreators.getPosts,
   getFollowings: followCreators.getFollowings,
+  deletePost: postCreators.deletePost,
   signOut: Creators.signOut,
 }
 

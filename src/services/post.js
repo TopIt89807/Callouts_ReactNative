@@ -1,13 +1,12 @@
 import request from './fetchApi';
 
-export const addPost = (master_id, text, image, token) => {
+export const addPost = (master_id, text, image, thumb_img, token) => {
     let data = {
         master_id,
         text,
         image,
-        thumb_img: image,
+        thumb_img,
     };
-    console.log(image);
     let option = {
         method: 'POST',
         body: JSON.stringify(data),
@@ -18,6 +17,44 @@ export const addPost = (master_id, text, image, token) => {
     };
   
     const url = 'api/post/add';
+    return request(url, option)
+}
+
+export const updatePost = (id, master_id, text, image, thumb_img, token) => {
+    let data = {
+        id,
+        master_id,
+        text,
+        image,
+        thumb_img,
+    };
+    let option = {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token,
+        },
+    };
+  
+    const url = 'api/post/update';
+    return request(url, option)
+}
+
+export const deletePost = (id, token) => {
+    let data = {
+        id,
+    };
+    let option = {
+        method: 'DELETE',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token,
+        },
+    };
+  
+    const url = 'api/post/delete';
     return request(url, option)
 }
 

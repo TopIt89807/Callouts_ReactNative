@@ -13,6 +13,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ImagePicker from 'react-native-image-picker';
 import defaultImg from 'src/static/images/default-thumbnail.jpg';
 import { RNS3 } from 'react-native-aws3';
+import ImageResizer from 'react-native-image-resizer';
+import { aws } from 'configs'
 
 class Wizard extends React.Component {
     static navigationOptions = ({navigation}) => ({
@@ -21,11 +23,18 @@ class Wizard extends React.Component {
 
     state = {
         description: '',
-        avatarSource: defaultImg,
-        response: '',
+        imgSrc: defaultImg,
+        thumbnailSrc: defaultImg,
     }
 
     componentDidMount() {
+        var {params} = this.props.navigation.state;
+        if(params)
+            this.setState({
+                description: params.text,
+                imgSrc: params.image? {uri: params.thumb_img}: defaultImg,
+                thumbnailSrc: params.image? {uri: params.thumb_img}: defaultImg,
+            });
     }
 
     componentWillReceiveProps({ global, user, follow, post }) {
@@ -35,62 +44,12 @@ class Wizard extends React.Component {
                 
           this.props.navigation.goBack();
         }
-    }
-
-    onSave = () => {
-        if(!this.state.description && !this.state.response.uri) {
-            return this.props.showMessage({
-                visible: true,
-                title: 'Error...',
-                text: 'Attach text or image!',
-            })
+        if (global.status.effects[Types.UPDATE_POST] === 'success'
+            && this.props.global.status.effects[Types.UPDATE_POST] === 'request') {
+            this.props.getPosts(this.props.user.result.user.id);
+                
+          this.props.navigation.goBack();
         }
-        if(!this.state.response.uri) {
-            this.props.addPost(this.props.user.result.user.id, this.state.description, '');
-            return this.props.showMessage({
-                visible: true,
-                title: 'Success',
-                text: 'You posted a new text!',
-            })
-        }
-        const file = {
-            // `uri` can also be a file system path (i.e. file://)
-            uri: this.state.response.uri,
-            name: Date.now(),
-            type: "image/png"
-        }
-            
-        const options = {
-            keyPrefix: "images/",
-            bucket: "callouts-rn",
-            region: "us-east-1",
-            accessKey: "AKIAJFNO27RERYUIWP4A",
-            secretKey: "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",
-            successActionStatus: 201
-        }
-            
-        RNS3.put(file, options).then(response => {
-            if (response.status !== 201)
-                throw new Error("Failed to upload image to S3");
-            this.props.showMessage({
-                visible: true,
-                title: 'Success',
-                text: 'New post added!',
-            })
-            this.props.addPost(this.props.user.result.user.id, this.state.description,
-                response.body.postResponse.location);
-            /**
-             * {
-             *   postResponse: {
-             *     bucket: "your-bucket",
-             *     etag : "9f620878e06d28774406017480a59fd4",
-             *     key: "uploads/image.png",
-             *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-             *   }
-             * }
-             */
-        })
-        
     }
 
     showImagePicker = () => {
@@ -121,22 +80,122 @@ class Wizard extends React.Component {
             
                 // You can also display the image using data:
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-            
                 this.setState({
-                    avatarSource: source,
-                    response: response,
+                    imgSrc: source,
                 });
+
+                ImageResizer.createResizedImage(this.state.imgSrc.uri , 500, 500, "JPEG", 90).then((response) => {
+                    console.log(response);
+                    this.setState({
+                        thumbnailSrc: {uri: response.uri}
+                    })
+                    // response.uri is the URI of the new image that can now be displayed, uploaded... 
+                    // response.path is the path of the new image 
+                    // response.name is the name of the new image with the extension 
+                    // response.size is the size of the new image 
+                }).catch((err) => {
+                    console.log(err);
+                });
+        
             }
         });
     }
 
+    onSave = () => {
+        var {params} = this.props.navigation.state;
+        if(!this.state.description && !this.state.imgSrc.uri) {
+            return this.props.showMessage({
+                visible: true,
+                title: 'Error...',
+                text: 'Attach text or image!',
+            })
+        }
+        if(!this.state.imgSrc.uri) {
+            if(params)
+                this.props.updatePost(params._id, this.props.user.result.user.id, this.state.description,
+                    '', '');
+            else
+                this.props.addPost(this.props.user.result.user.id, this.state.description, '', '');
+
+            return this.props.showMessage({
+                visible: true,
+                title: 'Success',
+                text: 'You posted a new text!',
+            })
+        }
+
+        if(params) {
+            if(params.image == this.state.imgSrc.uri) {
+                this.props.updatePost(params._id, this.props.user.result.user.id, this.state.description,
+                    params.image, params.thumb_img);
+                return;
+            }
+        }
+        const file1 = {
+            // `uri` can also be a file system path (i.e. file://)
+            uri: this.state.imgSrc.uri,
+            name: Date.now(),
+            type: "image/png"
+        }
+
+        const file2 = {
+            // `uri` can also be a file system path (i.e. file://)
+            uri: this.state.thumbnailSrc.uri,
+            name: Date.now() + "_",
+            type: "image/png"
+        }
+            
+        const options = {
+            keyPrefix: aws.s3.keyPrefix,
+            bucket: aws.s3.bucketName,
+            region: aws.region,
+            accessKey: aws.s3.accessKey,
+            secretKey: aws.s3.secretKey,
+            successActionStatus: 201
+        }
+        
+        RNS3.put(file1, options).then(response => {
+            if (response.status !== 201)
+                throw new Error("Failed to upload image to S3");
+
+            RNS3.put(file2, options).then(response2 => {
+                if (response2.status !== 201)
+                    throw new Error("Failed to upload image to S3");
+                this.props.showMessage({
+                    visible: true,
+                    title: 'Success',
+                    text: 'New post added!',
+                })
+                if(params)
+                    this.props.updatePost(params._id, this.props.user.result.user.id, this.state.description,
+                        response.body.postResponse.location, response2.body.postResponse.location);
+                else
+                    this.props.addPost(this.props.user.result.user.id, this.state.description,
+                        response.body.postResponse.location, response2.body.postResponse.location);
+            });
+            /**
+             * {
+             *   postResponse: {
+             *     bucket: "your-bucket",
+             *     etag : "9f620878e06d28774406017480a59fd4",
+             *     key: "uploads/image.png",
+             *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+             *   }
+             * }
+             */
+        })
+        
+    }
+
     render() {
+      var {params} = this.props.navigation.state;
+
       const leftButtonConfig = {
         title: '<Back',
         handler: () => this.props.navigation.goBack()
       };
       const rightButtonConfig = {
-        title: 'Save',
+        title: params? 'Update': 'Save',
         handler: this.onSave
       };
       return (
@@ -153,8 +212,7 @@ class Wizard extends React.Component {
                 <TouchableOpacity activeOpacity = { .5 } onPress={this.showImagePicker}>
                     <Image
                         style={styles.cover}
-                        source={this.state.avatarSource}
-                        // source={{uri: "https://process.filestackapi.com/rotate=deg:exif/resize=width:300,height:300,fit:clip/h7l9sufJQ0WkGSCK6T8P"}}
+                        source={this.state.thumbnailSrc}
                     />
                 </TouchableOpacity>
                 <TextField
@@ -182,6 +240,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   addPost: postCreators.addPost,
+  updatePost: postCreators.updatePost,
   getPosts: postCreators.getPosts,
   getFollowings: followCreators.getFollowings,
   signOut: Creators.signOut,

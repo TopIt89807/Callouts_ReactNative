@@ -8,13 +8,43 @@ function* addPost(action) {
     yield put(requestCreator(Types.ADD_POST))
     const res = yield select(state => state.get('user'));
     const token = res.result.token;
-    const result = yield call(services.addPost, action.master, action.text, action.image, token)
+    const result = yield call(services.addPost, action.master, action.text, action.image, action.thumb_img, token)
     if(result.status == 200)
         yield put(successCreator(Types.ADD_POST, { result, show: 1 }))
     else 
         yield put(failureCreator(Types.ADD_POST, { err: result }))
   } catch (err) {
       yield put(failureCreator(Types.ADD_POST, { err }))
+  }
+}
+
+function* updatePost(action) {
+    try {
+      yield put(requestCreator(Types.UPDATE_POST))
+      const res = yield select(state => state.get('user'));
+      const token = res.result.token;
+      const result = yield call(services.updatePost, action.id, action.master, action.text, action.image, action.thumb_img, token)
+      if(result.status == 200)
+          yield put(successCreator(Types.UPDATE_POST, { result, show: 1 }))
+      else 
+          yield put(failureCreator(Types.UPDATE_POST, { err: result }))
+    } catch (err) {
+        yield put(failureCreator(Types.UPDATE_POST, { err }))
+    }
+  }
+
+function* deletePost(action) {
+  try {
+    yield put(requestCreator(Types.DELETE_POST))
+    const res = yield select(state => state.get('user'));
+    const token = res.result.token;
+    const result = yield call(services.deletePost, action.id, token)
+    if(result.status == 200)
+        yield put(successCreator(Types.DELETE_POST, { result, show: 1 }))
+    else 
+        yield put(failureCreator(Types.DELETE_POST, { err: result }))
+  } catch (err) {
+      yield put(failureCreator(Types.DELETE_POST, { err }))
   }
 }
 
@@ -51,6 +81,8 @@ function* getAll(action) {
 export function* postSaga() {
   yield all([
     takeLatest(Types.ADD_POST, addPost),
+    takeLatest(Types.UPDATE_POST, updatePost),
+    takeLatest(Types.DELETE_POST, deletePost),
     takeLatest(Types.GET_POSTS, getPosts),
     takeLatest(Types.GET_ALL, getAll),
   ])
