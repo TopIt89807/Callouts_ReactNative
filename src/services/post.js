@@ -75,9 +75,13 @@ export const getPosts = (master_id, token) => {
     return request(url, option)
 }
 
-export const getAll = (token) => {
+export const getAll = (follower, token) => {
+    let data = {
+        follower,
+    };
     let option = {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
             'x-access-token': token,

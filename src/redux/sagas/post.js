@@ -67,8 +67,9 @@ function* getAll(action) {
   try {
     yield put(requestCreator(Types.GET_ALL))
     const res = yield select(state => state.get('user'));
+    const follower = res.result.user.id;
     const token = res.result.token;
-    const result = yield call(services.getAll, token)
+    const result = yield call(services.getAll, follower, token)
     if(result.status == 200)
         yield put(successCreator(Types.GET_ALL, { list: result.list }))
     else 
