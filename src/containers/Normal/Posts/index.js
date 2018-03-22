@@ -13,7 +13,7 @@ class Posts extends React.Component {
     };
 
     componentWillReceiveProps({ global, user, follow, post }) {
-      if(follow.tab != this.props.follow.tab) {
+      if(follow.tab != -1 && follow.tab != this.props.follow.tab) {
         this.props.getAll();
       }
     }

@@ -5,7 +5,7 @@ import { success } from 'utils/action'
 
 export const initialState = Immutable({
     result: {},
-    tab: 0,
+    tab: -1,
     followings: [],
 })
 

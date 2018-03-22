@@ -25,16 +25,6 @@ class Signup extends React.Component {
 
             // const { navigation } = this.props;
             // navigation.goBack();
-
-        //     if (user.err !== null) {
-        //         if (user.err.code === 'UserNotConfirmedException') {
-        //         navigate('ConfirmUser', { username: this.state.email })
-        //         }
-        //     } else {
-        //         if (user.result.mfa === true) {
-        //         navigate('CodeVerify')
-        //         }
-        //     }
         }
     }
 
@@ -88,6 +78,11 @@ class Signup extends React.Component {
         if(this.props.global.status.effects[Types.SIGN_UP] == "success") {
             const { navigation } = this.props;
             navigation.goBack();
+            this.setState({
+                email: '',
+                password: '',
+                confirmPassword: '',
+            })
         }
     }
 
@@ -108,6 +103,7 @@ class Signup extends React.Component {
                             placeholder='Email'
                             returnKeyType={'next'}
                             onChangeText={(text) => this.setState({email: text})}
+                            value={this.state.email}
                         />
                         <TextInput
                             style={styles.textInput}
@@ -115,6 +111,7 @@ class Signup extends React.Component {
                             placeholder='Password'
                             returnKeyType={'next'}
                             onChangeText={(text) => this.setState({password: text})}
+                            value={this.state.password}
                         />
                         <TextInput
                             style={styles.textInput}
@@ -122,6 +119,7 @@ class Signup extends React.Component {
                             placeholder='Confirm Password'
                             returnKeyType={'go'}
                             onChangeText={(text) => this.setState({confirmPassword: text})}
+                            value={this.state.confirmPassword}
                         />
                         <TouchableOpacity
                             activeOpacity={0.5}

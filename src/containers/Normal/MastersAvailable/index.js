@@ -24,7 +24,7 @@ class MastersAvailable extends React.Component {
     }
 
     componentWillReceiveProps({ global, user, follow }) {
-      if(follow.tab != this.props.follow.tab) {
+      if(follow.tab != -1 && follow.tab != this.props.follow.tab) {
         this.props.getUsers(2);
       }
       if (global.status.effects[Types.FOLLOW_ADD] === 'success'

@@ -25,6 +25,10 @@ class Login extends React.Component {
             if(this.props.user.result.user.user_type == 1)
                 navigate('Normal');
             else navigate('Master')
+            this.setState({
+                email: '',
+                password: '',
+            })
         }
     }
 
@@ -82,12 +86,14 @@ class Login extends React.Component {
                             keyboardType='email-address'
                             placeholder='Email'
                             onChangeText={(text) => this.setState({email: text})}
+                            value={this.state.email}
                         />
                         <TextInput
                             style={styles.textInput}
                             secureTextEntry
                             placeholder='Password'
                             onChangeText={(text) => this.setState({password: text})}
+                            value={this.state.password}
                         />
                         <TouchableOpacity
                             activeOpacity={0.5}

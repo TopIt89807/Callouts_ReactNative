@@ -18,7 +18,7 @@ class Lists extends React.Component {
     }
 
     componentWillReceiveProps({ global, user, follow, post }) {
-      if(follow.tab != this.props.follow.tab) {
+      if(follow.tab != -1 && follow.tab != this.props.follow.tab) {
         this.props.getFollowings();
       }
       if (global.status.effects[Types.GET_POSTS] === 'success'
