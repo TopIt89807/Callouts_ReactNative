@@ -32,7 +32,7 @@ class Wizard extends React.Component {
         if(params)
             this.setState({
                 description: params.text,
-                imgSrc: params.image? {uri: params.thumb_img}: defaultImg,
+                imgSrc: params.image? {uri: params.image}: defaultImg,
                 thumbnailSrc: params.image? {uri: params.thumb_img}: defaultImg,
             });
     }
